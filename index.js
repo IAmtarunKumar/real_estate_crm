@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true, parameterLimit: 5
 ////
 app.get("/", async(req,res)=>{
     try{
-    return res.status(200).send(`Welcome`)
+    return res.status(200).send(`Real estate crm is working`)
     }catch(error){
         console.log(error.message)
         return res.status(500).send(`Internal server error ${error.message}`)

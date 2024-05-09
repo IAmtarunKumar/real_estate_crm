@@ -9,6 +9,8 @@ const verifyToken = (req, res, next) => {
     // console.log("token", token)
     const tokenWithoutBearer = token.split(" ")[1]; // Get token without 'Bearer '
 
+console.log("tokenWithoutBearer",tokenWithoutBearer)
+
 
 
     jwt.verify(tokenWithoutBearer, process.env.JWTPRIVATEKEY, (err, decoded) => {

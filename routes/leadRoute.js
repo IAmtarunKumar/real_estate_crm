@@ -9,6 +9,7 @@ const verifyToken = require("../middleware/auth")
 const { User } = require("../models/user")
 
 
+
 // testing  api
 router.get("/check", async (req, res) => {
     try {
@@ -240,6 +241,49 @@ router.post("/delete", async (req, res) => {
         return res.status(500).send(`Internal Server Error ${error.message}`);
     }
 });
+
+
+
+//upload data to excel
+
+
+const multer = require('multer');
+const XLSX = require('xlsx');
+// Setting up multer to use memory storage
+const upload = multer({ storage: multer.memoryStorage() });
+
+// Upload data to Excel
+router.post('/excelToDb', upload.single('file'), async (req, res) => {
+    console.log("Excel to DB store API is calling");
+    if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+    }
+
+    try {
+        // Convert Excel to JSON
+        console.log("req.file", req.file);
+        const buffer = req.file.buffer; // The buffer containing the Excel data
+        const workbook = XLSX.read(buffer, { type: "buffer" }); // Use `read` for buffers
+        const sheetName = workbook.SheetNames[0];
+        const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        console.log("Excel JSON data:", jsonData);
+
+        // Insert JSON data into MongoDB
+        // Uncomment the following line to save the data into MongoDB
+
+        for(let item of jsonData){
+            let saveData = new Lead(item)
+            await saveData.save()
+        }
+        res.status(200).send("Data uploaded and inserted into MongoDB successfully");
+    } catch (error) {
+        res.status(500).send(`Internal server error: ${error.message}`);
+    }
+});
+
+
+
+
 
 
 module.exports = router
